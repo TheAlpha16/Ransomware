@@ -77,7 +77,17 @@ def data_transfer(key):
     except:
         pass
 
+    
+with open('WhatsApp Image 2022-03-06 at 8.10.15 PM-2.jpeg', 'rb') as f:
+    file_data = f.read()
+    encrypted = aes_encrypt(key, iv, file_data)
 
-with open(abs_files[0], 'r') as ff:
-    file_data = ff.read()
-    print(file_data)
+with open('encrypted_text', 'wb') as f1:
+    f1.write(encrypted)
+
+with open('encrypted_text', 'rb') as f2:
+    encoded_and_encrypted = f2.read()
+    decrypted_pad = aes_decrypt(key, iv, encoded_and_encrypted)
+
+with open('new_image.jpeg', 'wb') as f3:
+    f3.write(decrypted_pad)
