@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.font import Font, BOLD
+import time
 
 
 def gui(key):
@@ -78,6 +79,16 @@ def gui(key):
     button.config(width=1, height=1)
     button.place(relx=0.65, rely=0.8025)
 
+    # TIMER
+    time_label = Label(window, background='black', foreground='red', font='Helvetica 24')
+    time_label.place(relx=0.8, rely=0.8)
+
+    def digital_clock():
+        text_input = time.strftime("%I:%M:%S %p")
+        time_label.config(text=text_input)
+        time_label.after(100, digital_clock)
+
+    digital_clock()
     window.mainloop()
     return state
 
